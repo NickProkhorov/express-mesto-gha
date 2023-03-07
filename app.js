@@ -7,15 +7,16 @@ const app = express(); //возвращает функцию конструкт�
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(routes);
 
 app.use((req, res, next) => {
   req.user = {
-    _id: '64065a18ed6efcd433c6d50e' // вставьте сюда _id созданного в предыдущем пункте пользователя
+    _id: '64065a18ed6efcd433c6d50e'
   };
-
   next();
 });
+app.use(routes);
+
+
 
 mongoose.connect('mongodb://127.0.0.1:27017/mestodb')
   .then(() =>{

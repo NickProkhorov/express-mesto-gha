@@ -1,4 +1,3 @@
-// controllers/cards.js
 
 const Card = require('../models/card');
 
@@ -8,12 +7,39 @@ module.exports.getCards = (req, res) => { // возвращает все кар�
     .catch(() => res.status(500).send({ message: 'Произошла ошибка при запросе всех карточек' }))
 };
 
-module.exports.createCard = (req, res) => { // 2. POST /cards — создаёт карточку
-  console.log(req.user._id); // _id станет доступен
+module.exports.createCard = (req, res) => { // создаёт карточку
+  const { name, link } = req.body;
+  const owner = req.user._id;
+
+Card.create({ name, link, owner }) // создаем документ на основе пришедших данных
+    .then(card => res.status(200).send({ data: card }))
+    .catch(() => res.status(500).send({ message: 'ошибка при создании карточки' }))
 };
 
-// 3. DELETE /cards/:cardId — удаляет карточку по идентификатору
+module.exports.deleteCard = (req, res) => { // удаляет карточку по идентификатору
+  Card.findByIdAndRemove(req.params.cardId)
+      .then(card => res.send({ data: card }))
+      .catch(() => res.status(500).send({ message: 'Произошла ошибка' }));
+};
 
-// 4. PUT /cards/:cardId/likes — поставить лайк карточке
+module.exports.likeCard = (req, res) => { // поставить лайк карточке
 
-// 5. DELETE /cards/:cardId/likes — убрать лайк с карточки
+  Card.findByIdAndUpdate(
+  req.params.cardId,
+  { $addToSet: { likes: req.user._id } }, // добавить _id в массив, если его там нет
+  { new: true },
+  )
+  .then(card => res.send({ data: card }))
+  .catch(() => res.status(500).send({ message: 'Произошла ошибка' }));
+}
+
+module.exports.dislikeCard = (req, res) => { // 5. DELETE /cards/:cardId/likes — убрать лайк с карточки deleteLikeCard
+
+  Card.findByIdAndUpdate(
+  req.params.cardId,
+  { $pull: { likes: req.user._id } }, // убрать _id из массива
+  { new: true },
+  )
+  .then(card => res.send({ data: card }))
+  .catch(() => res.status(500).send({ message: 'Произошла ошибка' }));
+}

@@ -1,7 +1,8 @@
-const express = require('express'); // express import
+const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
-const routes = require('./routes/users');
+const routes = require('./routes/router');
+
 const { PORT = 3000 } = process.env;
 const app = express(); //возвращает функцию конструктор с методами get, listen, use и др.
 
@@ -14,9 +15,8 @@ app.use((req, res, next) => {
   };
   next();
 });
+
 app.use(routes);
-
-
 
 mongoose.connect('mongodb://127.0.0.1:27017/mestodb')
   .then(() =>{

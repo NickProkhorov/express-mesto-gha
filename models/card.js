@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const cardSchema = new mongoose.Schema({ //здесь создаю как массив или сначала 1 карточку?
+const cardSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
@@ -11,19 +11,19 @@ const cardSchema = new mongoose.Schema({ //здесь создаю как мас
     type: String,
     required: true,
   },
-  owner: {                    //нужно создавать модель owner?
+  owner: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'owner',
+    ref: 'user',
     required: true,
   },
-  likes: {
+  likes: [{
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'likes',
-    default: []               //как указать пустой массив по умолчанию?
-  },
+    ref: 'user',
+    default: [],
+  }],
   createdAt: {
     type: Date,
-    required: true,
+    default: Date.now
   }
 });
 

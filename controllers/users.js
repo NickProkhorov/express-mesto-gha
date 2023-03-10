@@ -30,16 +30,13 @@ module.exports.createUser = (req, res) => { //err.name = 'ValidationError'
 module.exports.updateUserProfile = (req, res) => {
   const { name, about } = req.body;
   User.findByIdAndUpdate( req.user._id, { name, about }, { new: true, runValidators: true })
-      .then(user => res.status(200).send({ data: user }))
-      .catch(() => res.status(500).send({ message: 'Произошла ошибка при обновлении пользователя' }));
+      .then(user => res.status(200).send({ user }))
+      .catch(() => res.status(400).send({ message: 'Произошла ошибка при обновлении пользователя' }));
 };
 
 module.exports.updateUserAvatar = (req, res) => {
   const { avatar } = req.body;
   User.findByIdAndUpdate( req.user._id, { avatar }, { new: true })
     .then(user => res.status(200).send({ data: user }))
-    .catch(() => res.status(500).send({ message: 'ошибка при создании пользователя' }))
+    .catch(() => res.status(400).send({ message: 'ошибка при создании пользователя' }))
 };
-
-
-

@@ -1,36 +1,42 @@
 const User = require('../models/user');
 
-module.exports.getUsers = (req, res) => { //возвращает всех пользователей
-  User.find({})
+module.exports.getUsers = (req, res) => {
+  return User.find({})
     .then(users => res.status(200).send({ data: users }))
-    .catch(() => res.status(500).send({ message: 'Произошла ошибка' }))
+    .catch((err) => res.status(err.status).send(err.message))
 };
 
-module.exports.getUser = (req, res) => { //возвращает пользователя по _id
-  console.log(req.params.userId);
-  User.findById(req.params.userId)
+module.exports.getUserById = (req, res) => {
+
+  return User.findById(req.params.userId)
       .then(user => res.status(200).send({ data: user }))
-      .catch(() => res.status(500).send({ message: 'Произошла ошибка' }))
+      .catch((err)=> res.status(err.status).send(err.message))
 };
 
-module.exports.createUser = (req, res) => { //создаёт пользователя
-  const { name, about, avatar } = req.body; // получаем из объекта запроса имя, описание и аватар пользователя
+module.exports.createUser = (req, res) => { //err.name = 'ValidationError'
+  const { name, about, avatar } = req.body;
 
-  User.create({ name, about, avatar }) // создаем документ на основе пришедших данных
-    .then(user => res.status(200).send({ data: user }))
-    .catch(() => res.status(500).send({ message: 'ошибка при создании пользователя' }))
+  User.create({ name, about, avatar })
+    .then(user => res.status(201).send({ data: user }))
+    .catch((err) => {
+      if ( err.name === 'ValidationError') {
+        res.status(400).send('Переданы некорректные данные при создании пользователя')
+      } else {
+        res.status(500).send('Ошибка по умолчанию')
+      }
+    })
 };
 
-module.exports.updateUserProfile = (req, res) => { // обновим имя найденного по _id пользователя
-  const { name, about } = req.body; // получаем из объекта запроса имя и описание профиля
-  User.findByIdAndUpdate( req.user._id, { name, about }, { new: true })
+module.exports.updateUserProfile = (req, res) => {
+  const { name, about } = req.body;
+  User.findByIdAndUpdate( req.user._id, { name, about }, { new: true, runValidators: true })
       .then(user => res.status(200).send({ data: user }))
       .catch(() => res.status(500).send({ message: 'Произошла ошибка при обновлении пользователя' }));
 };
 
-module.exports.updateUserAvatar = (req, res) => { //обновляет аватар пользователя
-  const { avatar } = req.body; // получаем из объекта запроса аватар профиля
-  User.findByIdAndUpdate( req.user._id, { avatar }, { new: true }) // создаем документ на основе пришедших данных
+module.exports.updateUserAvatar = (req, res) => {
+  const { avatar } = req.body;
+  User.findByIdAndUpdate( req.user._id, { avatar }, { new: true })
     .then(user => res.status(200).send({ data: user }))
     .catch(() => res.status(500).send({ message: 'ошибка при создании пользователя' }))
 };

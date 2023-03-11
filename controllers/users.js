@@ -20,9 +20,9 @@ module.exports.createUser = (req, res) => { //err.name = 'ValidationError'
     .then(user => res.status(201).send({ data: user }))
     .catch((err) => {
       if ( err.name === 'ValidationError') {
-        res.status(400).send('Переданы некорректные данные при создании пользователя')
+        res.status(400).send({message: 'Переданы некорректные данные при создании пользователя'})
       } else {
-        res.status(500).send('Ошибка по умолчанию')
+        res.status(500).send({message: 'Ошибка по умолчанию'})
       }
     })
 };
@@ -30,7 +30,7 @@ module.exports.createUser = (req, res) => { //err.name = 'ValidationError'
 module.exports.updateUserProfile = (req, res) => {
   const { name, about } = req.body;
   User.findByIdAndUpdate( req.user._id, { name, about }, { new: true, runValidators: true })
-      .then(user => res.status(200).send({ user }))
+      .then(user => res.status(200).send({ data: user }))
       .catch(() => res.status(400).send({ message: 'Произошла ошибка при обновлении пользователя' }));
 };
 

@@ -1,4 +1,5 @@
 const UserNotFound = require('../errors/usernotfound');
+const CardNotFound = require('../errors/cardnotfound');
 const User = require('../models/user');
 
 module.exports.getUsers = (req, res) => {

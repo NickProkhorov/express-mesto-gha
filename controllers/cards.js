@@ -1,4 +1,4 @@
-
+const CardNotFound = require('../errors/cardnotfound');
 const Card = require('../models/card');
 
 module.exports.getCards = (req, res) => {
@@ -24,8 +24,17 @@ module.exports.createCard = (req, res) => {
 
 module.exports.deleteCard = (req, res) => {
   Card.findByIdAndRemove(req.params.cardId)
+      .orFail(()=>{
+        throw new CardNotFound();
+      })
       .then(card => res.send({ data: card }))
-      .catch(() => res.status(500).send({ message: 'Произошла ошибка' }));
+      .catch((err)=> {
+        if ( err.name === 'CardNotFound') {
+          res.status(err.status).send({ message: err.message })
+        } else {
+          res.status(500).send({message: 'Ошибка по умолчанию'})
+        }
+      })
 };
 
 module.exports.likeCard = (req, res) => {
@@ -42,8 +51,8 @@ module.exports.likeCard = (req, res) => {
     res.status(200).send({ data: card })
   })
   .catch((err) => {
-    if (err.name === 'ValidationError') {
-      return res.status(400).send({ message: "Переданы некорректные данные для постановки/снятии лайка." })
+    if (err.name === 'CastError') {
+      return res.status(400).send({ message: "Переданы некорректные данные для постановки/снятия лайка." })
     } else {
         res.status(500).send({message: 'Ошибка по умолчанию'})
     }
@@ -64,8 +73,8 @@ module.exports.dislikeCard = (req, res) => {
     res.status(200).send({ data: card })
   })
   .catch((err) => {
-    if (err.name === 'ValidationError') {
-      return res.status(400).send({ message: "Переданы некорректные данные для постановки/снятии лайка." })
+    if (err.name === 'CastError') {
+      return res.status(400).send({ message: "Переданы некорректные данные для постановки/снятия лайка." })
     } else {
         res.status(500).send({message: 'Ошибка по умолчанию'})
     }

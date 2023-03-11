@@ -24,17 +24,18 @@ module.exports.createCard = (req, res) => {
 
 module.exports.deleteCard = (req, res) => {
   Card.findByIdAndRemove(req.params.cardId)
-      .orFail(()=>{
-        throw new CardNotFound();
-      })
-      .then(card => res.send({ data: card }))
-      .catch((err)=> {
-        if ( err.name === 'CardNotFound') {
-          res.status(err.status).send({ message: err.message })
-        } else {
-          res.status(500).send({message: 'Ошибка по умолчанию'})
+      .then((card) => {
+        if(!card) {
+          return res.status(404).send({ message: "Пользователь c указанным id не найден" })
         }
-      })
+        res.status(200).send({ data: card })})
+        .catch((err)=> {
+          if (err.name === 'ValidationError') {
+            return res.status(400).send({ message: "Переданы некорректные данные при обновлении профиля" })
+          } else {
+            res.status(500).send({message: 'Ошибка по умолчанию'})
+          }
+        })
 };
 
 module.exports.likeCard = (req, res) => {

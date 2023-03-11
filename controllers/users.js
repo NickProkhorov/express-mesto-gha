@@ -10,10 +10,10 @@ module.exports.getUserById = (req, res) => {
 
   return User.findById(req.params.userId)
       .then(user => res.status(200).send({ data: user }))
-      .catch((err)=> res.status(err.status).send(err.message))
+      .catch((err)=> res.status(500).send({message: 'Ошибка по умолчанию'}))
 };
 
-module.exports.createUser = (req, res) => { //err.name = 'ValidationError'
+module.exports.createUser = (req, res) => {
   const { name, about, avatar } = req.body;
 
   User.create({ name, about, avatar })
@@ -38,5 +38,5 @@ module.exports.updateUserAvatar = (req, res) => {
   const { avatar } = req.body;
   User.findByIdAndUpdate( req.user._id, { avatar }, { new: true })
     .then(user => res.status(200).send({ data: user }))
-    .catch(() => res.status(400).send({ message: 'ошибка при создании пользователя' }))
+    .catch(() => res.status(400).send({ message: 'ошибка при обновлении аватара' }))
 };

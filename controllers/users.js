@@ -1,16 +1,26 @@
+const UserNotFound = require('../errors/usernotfound');
 const User = require('../models/user');
 
 module.exports.getUsers = (req, res) => {
   return User.find({})
     .then(users => res.status(200).send({ data: users }))
-    .catch((err) => res.status(err.status).send(err.message))
+    .catch((err) => res.status(500).send({ message: 'Ошибка по умолчанию' }))
 };
 
 module.exports.getUserById = (req, res) => {
 
   return User.findById(req.params.userId)
+      .orFail(()=>{
+        throw new UserNotFound();
+      })
       .then(user => res.status(200).send({ data: user }))
-      .catch((err)=> res.status(500).send({message: 'Ошибка по умолчанию'}))
+      .catch((err)=> {
+        if ( err.name === 'UserNotFound') {
+          res.status(err.status).send({ message: err.message })
+        } else {
+          res.status(500).send({message: 'Ошибка по умолчанию'})
+        }
+      })
 };
 
 module.exports.createUser = (req, res) => {
@@ -30,13 +40,33 @@ module.exports.createUser = (req, res) => {
 module.exports.updateUserProfile = (req, res) => {
   const { name, about } = req.body;
   User.findByIdAndUpdate( req.user._id, { name, about }, { new: true, runValidators: true })
-      .then(user => res.status(200).send({ data: user }))
-      .catch(() => res.status(400).send({ message: 'Произошла ошибка при обновлении пользователя' }));
+      .then((user) => {
+        if(!user) {
+          return res.status(404).send({ message: "Пользователь c указанным id не найден" })
+        }
+        res.status(200).send({ data: user })})
+      .catch((err) => {
+        if (err.name === 'ValidationError') {
+          return res.status(400).send({ message: "Переданы некорректные данные при обновлении профиля" })
+        } else {
+          res.status(500).send({message: 'Ошибка по умолчанию'})
+        }
+      })
 };
 
 module.exports.updateUserAvatar = (req, res) => {
   const { avatar } = req.body;
   User.findByIdAndUpdate( req.user._id, { avatar }, { new: true })
-    .then(user => res.status(200).send({ data: user }))
-    .catch(() => res.status(400).send({ message: 'ошибка при обновлении аватара' }))
+      .then((user) => {
+        if(!user) {
+          return res.status(404).send({ message: "Пользователь c указанным id не найден" })
+        }
+        res.status(200).send({ data: user })})
+      .catch((err) => {
+        if (err.name === 'ValidationError') {
+          return res.status(400).send({ message: "Переданы некорректные данные при обновлении аватара профиля" })
+        } else {
+          res.status(500).send({message: 'Ошибка по умолчанию'})
+        }
+      })
 };

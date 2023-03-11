@@ -35,8 +35,19 @@ module.exports.likeCard = (req, res) => {
   { $addToSet: { likes: req.user._id } },
   { new: true },
   )
-  .then(card => res.send({ data: card }))
-  .catch(() => res.status(500).send({ message: 'Произошла ошибка' }));
+  .then((card) => {
+    if(!card) {
+      return res.status(404).send({ message: "Передан несуществующий _id карточки." })
+    }
+    res.status(200).send({ data: card })
+  })
+  .catch((err) => {
+    if (err.name === 'ValidationError') {
+      return res.status(400).send({ message: "Переданы некорректные данные для постановки/снятии лайка." })
+    } else {
+        res.status(500).send({message: 'Ошибка по умолчанию'})
+    }
+  })
 }
 
 module.exports.dislikeCard = (req, res) => {
@@ -46,6 +57,17 @@ module.exports.dislikeCard = (req, res) => {
   { $pull: { likes: req.user._id } },
   { new: true },
   )
-  .then(card => res.send({ data: card }))
-  .catch(() => res.status(500).send({ message: 'Произошла ошибка' }));
+  .then((card) => {
+    if(!card) {
+      return res.status(404).send({ message: "Передан несуществующий _id карточки." })
+    }
+    res.status(200).send({ data: card })
+  })
+  .catch((err) => {
+    if (err.name === 'ValidationError') {
+      return res.status(400).send({ message: "Переданы некорректные данные для постановки/снятии лайка." })
+    } else {
+        res.status(500).send({message: 'Ошибка по умолчанию'})
+    }
+  })
 }

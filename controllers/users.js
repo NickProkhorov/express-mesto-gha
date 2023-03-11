@@ -1,5 +1,4 @@
 const UserNotFound = require('../errors/usernotfound');
-const CardNotFound = require('../errors/cardnotfound');
 const User = require('../models/user');
 
 module.exports.getUsers = (req, res) => {
@@ -9,15 +8,15 @@ module.exports.getUsers = (req, res) => {
 };
 
 module.exports.getUserById = (req, res) => {
-
   return User.findById(req.params.userId)
-      .orFail(()=>{
-        throw new UserNotFound();
-      })
-      .then(user => res.status(200).send({ data: user }))
+      .then((user) => {
+        if(!user) {
+          return res.status(404).send({ message: "Пользователь c указанным id не найден" })
+        }
+        res.status(200).send({ data: user })})
       .catch((err)=> {
-        if ( err.name === 'UserNotFound') {
-          res.status(err.status).send({ message: err.message })
+        if (err.name === 'ValidationError') {
+          return res.status(400).send({ message: "Переданы некорректные данные при обновлении профиля" })
         } else {
           res.status(500).send({message: 'Ошибка по умолчанию'})
         }

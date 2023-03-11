@@ -1,7 +1,7 @@
 [![Tests](../../actions/workflows/tests-13-sprint.yml/badge.svg)](../../actions/workflows/tests-13-sprint.yml) [![Tests](../../actions/workflows/tests-14-sprint.yml/badge.svg)](../../actions/workflows/tests-14-sprint.yml)
 # Проект Mesto фронтенд + бэкенд
 
-* [ссылка на репозиторий](git@github.com:NickProkhorov/express-mesto-gha.git)
+[ссылка на репозиторий](git@github.com:NickProkhorov/express-mesto-gha.git)
 
 ## Директории
 

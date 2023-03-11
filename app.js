@@ -12,7 +12,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use((req, res, next) => {
   req.user = {
-    _id: '64065a18ed6efcd433c6d50e' //64065a18ed6efcd433c6d50e
+    _id: '64065a18ed6efcd433c6d50e'
   };
   next();
 });
@@ -28,7 +28,7 @@ mongoose.connect('mongodb://127.0.0.1:27017/mestodb')
   })
 
 app.get('/', (req, res) => {
-  res.send('hello world!');
+  res.status(404).send({message: 'Страница не найдена'});
 });
 
 app.listen(PORT, () => {

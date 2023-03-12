@@ -30,7 +30,7 @@ module.exports.deleteCard = (req, res) => {
         }
         res.status(200).send({ data: card })})
         .catch(()=> {
-            res.status(500).send({ message: 'Переданы некорректнные данные карточки'})
+            res.status(400).send({ message: 'Переданы некорректнные данные карточки'})
           })
 };
 

@@ -15,11 +15,7 @@ module.exports.getUserById = (req, res) => {
         }
         res.status(200).send({ data: user })})
       .catch((err)=> {
-        if (err.name === 'ValidationError') {
-          return res.status(400).send({ message: "Переданы некорректные данные при обновлении профиля" })
-        } else {
-          res.status(500).send({message: 'Ошибка по умолчанию'})
-        }
+        res.status(400).send({message: 'Переданы некорректные данные при запросе пользователя'})
       })
 };
 

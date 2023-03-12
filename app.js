@@ -28,7 +28,7 @@ mongoose.connect('mongodb://127.0.0.1:27017/mestodb')
   })
 
 app.get('/', (req, res) => {
-  res.status(404).send({message: 'Страница не найдена'});
+  res.send('hello world!');
 });
 
 app.listen(PORT, () => {

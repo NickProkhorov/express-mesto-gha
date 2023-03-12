@@ -29,13 +29,9 @@ module.exports.deleteCard = (req, res) => {
           return res.status(404).send({ message: "Пользователь c указанным id не найден" })
         }
         res.status(200).send({ data: card })})
-        .catch((err)=> {
-          if (err.name === 'ValidationError') {
-            return res.status(400).send({ message: "Переданы некорректные данные при обновлении профиля" })
-          } else {
-            res.status(500).send({message: 'Ошибка по умолчанию'})
-          }
-        })
+        .catch(()=> {
+            res.status(500).send({ message: 'Переданы некорректнные данные карточки'})
+          })
 };
 
 module.exports.likeCard = (req, res) => {

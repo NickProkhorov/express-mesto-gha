@@ -4,6 +4,7 @@
   "description": "[![Tests](../../actions/workflows/tests-13-sprint.yml/badge.svg)](../../actions/workflows/tests-13-sprint.yml) [![Tests](../../actions/workflows/tests-14-sprint.yml/badge.svg)](../../actions/workflows/tests-14-sprint.yml)\r # Проект Mesto фронтенд + бэкенд",
   "main": "app.js",
   "scripts": {
+    "lint": "npx eslint .",
     "start": "node app.js",
     "dev": "nodemon app.js"
   },
@@ -12,7 +13,7 @@
     "url": "git+https://github.com/NickProkhorov/express-mesto-gha.git"
   },
   "keywords": [],
-  "author": "",
+  "author": "Nick Prokhorov",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/NickProkhorov/express-mesto-gha/issues"

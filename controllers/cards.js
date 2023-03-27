@@ -22,6 +22,9 @@ module.exports.createCard = (req, res, next) => {
 module.exports.deleteCard = (req, res, next) => {
   Card.findById(req.params.cardId)
     .then((delCard) => {
+      if (!delCard) {
+        throw new NotFoundError('Карточка c указанным id не найдена');
+      }
       const cardOwnerId = delCard.owner._id.toString();
       const userId = req.user._id.toString();
       if (cardOwnerId === userId) {
@@ -36,7 +39,8 @@ module.exports.deleteCard = (req, res, next) => {
       } else {
         throw new BadRequestError('Нельзя удалить чужую карточку');
       }
-    });
+    })
+    .catch(next);
 };
 
 module.exports.likeCard = (req, res, next) => {

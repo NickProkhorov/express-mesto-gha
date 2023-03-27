@@ -51,7 +51,12 @@ module.exports.likeCard = (req, res, next) => {
       }
       return res.status(http2.constants.HTTP_STATUS_OK).send({ data: card });
     })
-    .catch(next);
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        next(new BadRequestError('Карточка с указанным id не существует'));
+      }
+      return next(err);
+    });
 };
 
 module.exports.dislikeCard = (req, res, next) => {
@@ -66,5 +71,10 @@ module.exports.dislikeCard = (req, res, next) => {
       }
       return res.status(http2.constants.HTTP_STATUS_OK).send({ data: card });
     })
-    .catch(next);
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        next(new BadRequestError('Карточка с указанным id не существует'));
+      }
+      return next(err);
+    });
 };

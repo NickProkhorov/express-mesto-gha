@@ -77,7 +77,7 @@ module.exports.login = (req, res, next) => {
 module.exports.getCurrentUser = (req, res, next) => {
   User.findById(req.user._id)
     .orFail(() => { throw new NotFoundError('Пользователь c указанным id не найден'); })
-    .then((user) => res.status(http2.constants.HTTP_STATUS_OK).send(user)) // нужно написать проверку?
+    .then((user) => res.status(http2.constants.HTTP_STATUS_OK).send(user))
     .catch((err) => {
       if (err.name === 'CastError') {
         next(new BadRequestError('Пользователь с указанным id не существует'));

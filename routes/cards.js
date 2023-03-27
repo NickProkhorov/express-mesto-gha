@@ -16,12 +16,12 @@ router.post('/', auth, celebrate({
 
 router.delete('/:cardId', auth, deleteCard);
 router.put('/:cardId/likes', auth, celebrate({
-  body: Joi.object().keys({
+  headers: Joi.object().keys({
     cardId: Joi.string().alphanum().length(24),
   }),
 }), likeCard);
 router.delete('/:cardId/likes', auth, celebrate({
-  body: Joi.object().keys({
+  headers: Joi.object().keys({
     cardId: Joi.string().alphanum().length(24),
   }),
 }), dislikeCard);

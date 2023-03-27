@@ -10,7 +10,7 @@ router.post('/signup', celebrate({
   body: Joi.object().keys({
     name: Joi.string().min(2).max(30),
     about: Joi.string().min(2).max(30),
-    avatar: Joi.string(),
+    avatar: Joi.string().pattern(/(http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/),
     email: Joi.string().required().email({ minDomainSegments: 2, tlds: { allow: ['com', 'net', 'ru', 'org', 'de'] } }),
     password: Joi.string().required().min(8),
   }),

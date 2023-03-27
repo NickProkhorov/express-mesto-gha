@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-// const http2 = require('http2');
 const bcrypt = require('bcryptjs');
 const validator = require('validator');
 const UnautorizedError = require('../errors/unauthorized-err');
@@ -33,15 +32,15 @@ const userSchema = new mongoose.Schema({
     unique: true,
     validate: {
       validator(v) {
-        return validator.isEmail(v); // создает несколько пользователей с одинаковым email
+        return validator.isEmail(v);
       },
     },
   },
   password: {
     type: String,
     required: true,
-    minlength: 8,
     select: false,
+    minlength: 8,
   },
 });
 

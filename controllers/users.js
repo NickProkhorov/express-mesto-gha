@@ -7,7 +7,7 @@ const StatusConflictError = require('../errors/status-conflict-err');
 const BadRequestError = require('../errors/bad-request-err');
 const UnautorizedError = require('../errors/unauthorized-err');
 
-module.exports.getUsers = (req, res, next) => User.find({}) // done
+module.exports.getUsers = (req, res, next) => User.find({})
   .then((users) => res.status(http2.constants.HTTP_STATUS_OK).send({ data: users }))
   .catch(next);
 
@@ -17,9 +17,17 @@ module.exports.getUserById = (req, res, next) => {
       if (!user) {
         throw new NotFoundError('Пользователь c указанным id не найден');
       }
-      return res.status(http2.constants.HTTP_STATUS_OK).send({ data: user });
+      return res.status(http2.constants.HTTP_STATUS_OK)
+        .send({
+          name: user.name, about: user.about, avatar: user.avatar, email: user.email,
+        });
     })
-    .catch(next);
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        next(new BadRequestError('Переданы некорректные данные'));
+      }
+      return next(err);
+    });
 };
 
 module.exports.createUser = (req, res, next) => {
@@ -35,7 +43,10 @@ module.exports.createUser = (req, res, next) => {
       email,
       password: hash,
     }))
-    .then((user) => res.status(http2.constants.HTTP_STATUS_CREATED).send({ data: user }))
+    .then((user) => res.status(http2.constants.HTTP_STATUS_CREATED)
+      .send({
+        name: user.name, about: user.about, avatar: user.avatar, email: user.email,
+      }))
     .catch((err) => {
       if (err.code === 11000) {
         next(new StatusConflictError('Пользователь с такими данными уже существует'));
@@ -77,9 +88,17 @@ module.exports.updateUserProfile = (req, res, next) => {
       if (!user) {
         throw new NotFoundError('Пользователь c указанным id не найден');
       }
-      return res.status(http2.constants.HTTP_STATUS_OK).send({ data: user });
+      return res.status(http2.constants.HTTP_STATUS_OK)
+        .send({
+          name: user.name, about: user.about, avatar: user.avatar, email: user.email,
+        });
     })
-    .catch(next);
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        next(new BadRequestError('Переданы некорректные данные'));
+      }
+      return next(err);
+    });
 };
 
 module.exports.updateUserAvatar = (req, res, next) => {
@@ -89,7 +108,15 @@ module.exports.updateUserAvatar = (req, res, next) => {
       if (!user) {
         throw new NotFoundError('Пользователь c указанным id не найден');
       }
-      return res.status(http2.constants.HTTP_STATUS_OK).send({ data: user });
+      return res.status(http2.constants.HTTP_STATUS_OK)
+        .send({
+          name: user.name, about: user.about, avatar: user.avatar, email: user.email,
+        });
     })
-    .catch(next);
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        next(new BadRequestError('Переданы некорректные данные'));
+      }
+      return next(err);
+    });
 };

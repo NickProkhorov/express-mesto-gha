@@ -24,9 +24,10 @@ module.exports.getUserById = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        next(new BadRequestError('Переданы некорректные данные'));
+        next(new BadRequestError('Переданы некорректные данные профиля'));
+        return;
       }
-      return next(err);
+      next(err);
     });
 };
 
@@ -50,11 +51,12 @@ module.exports.createUser = (req, res, next) => {
     .catch((err) => {
       if (err.code === 11000) {
         next(new StatusConflictError('Пользователь с такими данными уже существует'));
+        return;
       }
       if (err.name === 'ValidationError') {
-        next(new BadRequestError('Переданы некорректные данные пользователя'));
+        next(new BadRequestError('Переданы некорректные данные при создании пользователя'));
       }
-      return next(err);
+      next(err);
     });
 };
 
@@ -69,8 +71,9 @@ module.exports.login = (req, res, next) => {
     .catch((err) => {
       if (err.statusCode === 401) {
         next(new UnautorizedError('Неправильные почта или пароль'));
+        return;
       }
-      return next(err);
+      next(err);
     });
 };
 
@@ -80,9 +83,10 @@ module.exports.getCurrentUser = (req, res, next) => {
     .then((user) => res.status(http2.constants.HTTP_STATUS_OK).send(user))
     .catch((err) => {
       if (err.name === 'CastError') {
-        next(new BadRequestError('Пользователь с указанным id не существует'));
+        next(new BadRequestError('Переданы некорректные данные при обновлении профиля'));
+        return;
       }
-      return next(err);
+      next(err);
     });
 };
 
@@ -100,9 +104,10 @@ module.exports.updateUserProfile = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        next(new BadRequestError('Переданы некорректные данные'));
+        next(new BadRequestError('Переданы некорректные данные при обновлении профиля'));
+        return;
       }
-      return next(err);
+      next(err);
     });
 };
 
@@ -111,7 +116,7 @@ module.exports.updateUserAvatar = (req, res, next) => {
   User.findByIdAndUpdate(req.user._id, { avatar }, { new: true })
     .then((user) => {
       if (!user) {
-        throw new NotFoundError('Пользователь c указанным id не найден');
+        throw new NotFoundError('Пользователь с указанным _id не найден');
       }
       return res.status(http2.constants.HTTP_STATUS_OK)
         .send({
@@ -120,8 +125,9 @@ module.exports.updateUserAvatar = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        next(new BadRequestError('Переданы некорректные данные'));
+        next(new BadRequestError('Переданы некорректные данные при обновлении аватара'));
+        return;
       }
-      return next(err);
+      next(err);
     });
 };

@@ -27,15 +27,10 @@ module.exports.deleteCard = (req, res, next) => {
         throw new NotFoundError('Карточка c указанным id не найдена');
       }
       const cardOwnerId = delCard.owner._id.toString();
-      const userId = req.user._id.toString();
+      const userId = req.user._id;
       if (cardOwnerId === userId) {
         Card.findByIdAndRemove(req.params.cardId)
-          .then((card) => {
-            if (!card) {
-              throw new NotFoundError('Карточка c указанным id не найдена');
-            }
-            return res.status(http2.constants.HTTP_STATUS_OK).send({ data: card });
-          })
+          .then((card) => res.status(http2.constants.HTTP_STATUS_OK).send({ data: card }))
           .catch(next);
       } else {
         throw new ForbiddenError('Нельзя удалить чужую карточку');
@@ -52,15 +47,16 @@ module.exports.likeCard = (req, res, next) => {
   )
     .then((card) => {
       if (!card) {
-        throw new NotFoundError('Передан несуществующий _id карточки.');
+        throw new NotFoundError('Передан несуществующий id карточки.');
       }
       return res.status(http2.constants.HTTP_STATUS_OK).send({ data: card });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        next(new BadRequestError('Карточка с указанным id не существует'));
+        next(new BadRequestError('Переданы некорректные данные при создании карточки'));
+        return;
       }
-      return next(err);
+      next(err);
     });
 };
 
@@ -78,8 +74,9 @@ module.exports.dislikeCard = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        next(new BadRequestError('Карточка с указанным id не существует'));
+        next(new BadRequestError('Переданы некорректные данные при создании карточки'));
+        return;
       }
-      return next(err);
+      next(err);
     });
 };

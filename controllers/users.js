@@ -55,6 +55,7 @@ module.exports.createUser = (req, res, next) => {
       }
       if (err.name === 'ValidationError') {
         next(new BadRequestError('Переданы некорректные данные при создании пользователя'));
+        return;
       }
       next(err);
     });
@@ -68,13 +69,7 @@ module.exports.login = (req, res, next) => {
       const token = jwt.sign({ _id: user._id }, 'extra-secret-key', { expiresIn: '7d' });
       res.send({ token });
     })
-    .catch((err) => {
-      if (err.statusCode === 401) {
-        next(new UnautorizedError('Неправильные почта или пароль'));
-        return;
-      }
-      next(err);
-    });
+    .catch(next);
 };
 
 module.exports.getCurrentUser = (req, res, next) => {
@@ -113,7 +108,7 @@ module.exports.updateUserProfile = (req, res, next) => {
 
 module.exports.updateUserAvatar = (req, res, next) => {
   const { avatar } = req.body;
-  User.findByIdAndUpdate(req.user._id, { avatar }, { new: true })
+  User.findByIdAndUpdate(req.user._id, { avatar }, { new: true, runValidators: true })
     .then((user) => {
       if (!user) {
         throw new NotFoundError('Пользователь с указанным _id не найден');
